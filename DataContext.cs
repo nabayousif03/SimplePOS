@@ -10,5 +10,5 @@ public class DataContext : DbContext
 
     }
 
-    public DbSet<orders> users { get; set; }
+    public DbSet<orders> Orders { get; set; }
 }
