@@ -1,0 +1,6 @@
+@SimplePOS_HostAddress = http://localhost:5217
+
+GET {{SimplePOS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
