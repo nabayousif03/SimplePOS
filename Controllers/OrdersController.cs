@@ -58,6 +58,11 @@ namespace SimplePOS.Controllers
                 return NotFound();
             }
 
+            if (order.Status == "Cancelled")
+            {
+                return BadRequest("Order is already cancelled");
+            }
+
             order.Status = "completed";
             await _context.SaveChangesAsync();
 
