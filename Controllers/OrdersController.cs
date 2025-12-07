@@ -58,7 +58,7 @@ namespace SimplePOS.Controllers
                 return NotFound();
             }
 
-            if (order.Status == "Cancelled")
+            if (order.Status == "cancelled")
             {
                 return BadRequest("Order is already cancelled");
             }
