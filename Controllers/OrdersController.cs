@@ -4,11 +4,13 @@ using SimplePOS.Models; // Ensure this matches your namespace
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SimplePOS.Data;
 
 namespace SimplePOS.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    
     public class OrdersController : ControllerBase
     {
         private readonly DataContext _context;
@@ -29,19 +31,26 @@ namespace SimplePOS.Controllers
         }
         
         [HttpPost]
-        public async Task<ActionResult<orders>> CreateOrder(orders order)
+        public async Task<ActionResult<orders>> CreateOrder(OrdersForm order)
         {
             
             order.Status = "pending"; 
-            order.OrderDate = DateTime.Now;
+            order.DeliveryDate = DateTime.UtcNow;
 
-            _context.Orders.Add(order);
+            var NewOrd = new orders
+            {
+                Id = Guid.NewGuid(),
+                totalPrice = order.totalPrice,
+                Status = order.Status,
+                DeliveryDate = order.DeliveryDate,
+            };
+
+            _context.Orders.Add(NewOrd);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetPendingOrders), new { id = order.Id }, order);
+            return Ok(order);
         }
-        
-        public async Task<IActionResult> MarkOrderComplete(int id)
+        [HttpPut("{id}/complete")]
+        public async Task<IActionResult> MarkOrderComplete(Guid id)
         {
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
@@ -52,7 +61,12 @@ namespace SimplePOS.Controllers
             order.Status = "completed";
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new
+            {
+                message = "Order has been completed",
+                status = order.Status
+                
+            });
         }
     }
 }
