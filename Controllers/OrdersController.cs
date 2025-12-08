@@ -73,7 +73,6 @@ namespace SimplePOS.Controllers
                 
             });
         }
-
         [HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelOrder(Guid id)
         {
