@@ -58,6 +58,11 @@ namespace SimplePOS.Controllers
                 return NotFound();
             }
 
+            if (order.Status == "cancelled")
+            {
+                return BadRequest("Order is already cancelled");
+            }
+
             order.Status = "completed";
             await _context.SaveChangesAsync();
 
@@ -67,6 +72,20 @@ namespace SimplePOS.Controllers
                 status = order.Status
                 
             });
+        }
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelOrder(Guid id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return NotFound();
+
+            if (order.Status == "completed")
+            {
+                return BadRequest("Cannot cancel order");
+            }
+            order.Status = "cancelled";
+            await _context.SaveChangesAsync();
+            return Ok("Order has been cancelled");
         }
     }
 }
